@@ -6,7 +6,7 @@ interface SutTypes {
 }
 
 const makeSut = (): SutTypes => {
-  const sut = new CompareFieldsValidation('password', 'passwordConfirmation')
+  const sut = new CompareFieldsValidation('field', 'fieldToCompare')
   return { sut }
 }
 
@@ -15,27 +15,19 @@ describe('CompareFieldsValidation', () => {
     const { sut } = makeSut()
     const validate = jest.spyOn(sut, 'validate')
 
-    sut.validate({ password: 'any_password', passwordConfirmation: 'any_password' })
-    expect(validate).toHaveBeenCalledWith({ password: 'any_password', passwordConfirmation: 'any_password' })
+    sut.validate({ field: 'any_value', fieldToCompare: 'any_value' })
+    expect(validate).toHaveBeenCalledWith({ field: 'any_value', fieldToCompare: 'any_value' })
   })
 
   test('Should return a InvalidParamError if validation fails', () => {
     const { sut } = makeSut()
-    const error = sut.validate({ password: 'any_password', passwordConfirmation: 'wrong_password' })
-    expect(error).toEqual(new InvalidParamError('passwordConfirmation'))
+    const error = sut.validate({ field: 'any_value', fieldToCompare: 'wrong_value' })
+    expect(error).toEqual(new InvalidParamError('fieldToCompare'))
   })
 
   test('Should not return if validation pass', () => {
     const { sut } = makeSut()
-    const error = sut.validate({ password: 'password', passwordConfirmation: 'password' })
+    const error = sut.validate({ field: 'any_value', fieldToCompare: 'any_value' })
     expect(error).toBeFalsy()
   })
-
-  // test('Should throw if EmailValidator throws', () => {
-  //   const { sut, emailValidatorStub } = makeSut()
-  //   jest.spyOn(emailValidatorStub, 'isValid').mockImplementationOnce(() => {
-  //     throw new Error()
-  //   })
-  //   expect(sut.validate).toThrow()
-  // })
 })
