@@ -18,7 +18,6 @@ export class SignUpController implements Controller {
       }
 
       const { email, password, name } = httpRequest.body
-
       const account = await this.addAccount.add({
         name,
         email,
