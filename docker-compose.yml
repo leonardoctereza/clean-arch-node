@@ -14,11 +14,13 @@ services:
     build: .
     restart: always
     image: clean-node-api
-    command: npm start
+    command: npm run debug
     volumes:
       - ./dist:/usr/src/app/dist
+      - ./package.json:/usr/src/app/package.json
     ports:
       - "5031:5031"
+      - "9222:9222"
     environment:
       - MONGO_URL=mongodb://mongodb:27017/clean-typescript-api
     depends_on:
