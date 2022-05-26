@@ -106,3 +106,6 @@ dist
 
 # globalConfig file
 globalConfig.json
+
+# data volume
+data
