@@ -15,6 +15,9 @@
     "test:ci": "npm test -- --coverage",
     "prepare": "husky install"
   },
+  "engines": {
+    "node": "^18"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/leonardoctereza/clean-arch-node.git"
