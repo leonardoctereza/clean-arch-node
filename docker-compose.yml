@@ -1,0 +1,31 @@
+version: "3.9"
+
+services:
+  mongodb:
+    image: mongo:4
+    restart: always
+    volumes:
+      - data:/data/db
+    ports:
+      - "27017:27017"
+    networks:
+      - clean-typescript-api
+  api:
+    build: .
+    restart: always
+    image: clean-node-api
+    command: npm start
+    volumes:
+      - ./dist:/usr/src/app/dist
+    ports:
+      - "5031:5031"
+    environment:
+      - MONGO_URL=mongodb://mongodb:27017/clean-typescript-api
+    depends_on:
+      - mongodb
+    networks:
+      - clean-typescript-api
+networks:
+  clean-typescript-api:
+volumes:
+  data:
