@@ -109,3 +109,4 @@ globalConfig.json
 
 # data volume
 data
+!src/data
