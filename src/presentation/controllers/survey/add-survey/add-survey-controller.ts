@@ -1,12 +1,18 @@
-import { ok, serverError } from '../../../helpers/http/http-helper'
-import { Controller, HttpRequest, HttpResponse, Validation } from './add-survey-protocols'
+import { badRequest, ok, serverError } from '../../../helpers/http/http-helper'
+import { AddSurvey, Controller, HttpRequest, HttpResponse, Validation } from './add-survey-protocols'
 
 export class AddSurveyController implements Controller {
-  constructor (private readonly validation: Validation) {}
+  constructor (private readonly addSurvey: AddSurvey, private readonly validation: Validation) {}
 
   async handle (httpRequest: HttpRequest): Promise<HttpResponse> {
     try {
-      this.validation.validate(httpRequest.body)
+      const error = this.validation.validate(httpRequest.body)
+      if (error) {
+        return badRequest(error)
+      }
+
+      const { question, answers } = httpRequest.body
+      await this.addSurvey.add({ question, answers })
       return ok({})
     } catch (error) {
       return serverError(error)
