@@ -1,14 +1,22 @@
 // import { HttpRequest } from '../protocols'
-import { forbidden } from '../helpers/http/http-helper'
+import { forbidden, ok } from '../helpers/http/http-helper'
 import { AccessDeniedError } from '../errors'
 import { AuthMiddleware } from './auth-middleware'
 import { LoadAccountByToken } from '../../domain/usecases/load-account-by-token'
 import { AccountModel } from '../../domain/models/account'
+import { HttpRequest } from '../protocols'
 
 interface SutType {
   sut: AuthMiddleware
   loadAccountByTokenStub: LoadAccountByToken
 }
+
+const makeFakeRequest = (): HttpRequest => ({
+  headers: {
+    'x-access-token': 'token'
+  },
+  body: makeFakeAccount()
+})
 
 const makeFakeAccount = (): AccountModel => {
   return {
@@ -52,5 +60,16 @@ describe('Auth Middleware', () => {
       }
     })
     expect(loadSpy).toHaveBeenCalledWith('any_token')
+  })
+  test('Should return 403 if LoadAccountByToken returns null', async () => {
+    const { sut, loadAccountByTokenStub } = makeSut()
+    jest.spyOn(loadAccountByTokenStub, 'load').mockReturnValueOnce(null)
+    const httpREsponse = await sut.handle({})
+    expect(httpREsponse).toEqual(forbidden(new AccessDeniedError()))
+  })
+  test('Should return 200 if LoadAccountByToken returns an account', async () => {
+    const { sut } = makeSut()
+    const httpREsponse = await sut.handle(makeFakeRequest())
+    expect(httpREsponse).toEqual(ok({ accountId: 'valid_id' }))
   })
 })
